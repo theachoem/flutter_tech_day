@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tech_days/providers/theme_provider.dart';
 import 'package:flutter_tech_days/views/account/account_view.dart';
 import 'package:flutter_tech_days/views/home/home_view_model.dart';
+import 'package:provider/provider.dart';
 
 class HomeContent extends StatelessWidget {
   const HomeContent({
@@ -12,6 +14,7 @@ class HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Flutter Tech Day"),
@@ -25,6 +28,12 @@ class HomeContent extends StatelessWidget {
                 ),
               );
             },
+          ),
+          IconButton(
+            onPressed: () => themeProvider.toggleDarkMode(),
+            icon: themeProvider.isDarkMode
+                ? Icon(Icons.light_mode)
+                : Icon(Icons.dark_mode),
           )
         ],
       ),
