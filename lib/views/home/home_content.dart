@@ -1,12 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_tech_days/providers/theme_provider.dart';
-import 'package:flutter_tech_days/views/account/account_view.dart';
-import 'package:flutter_tech_days/views/home/home_view_model.dart';
-import 'package:provider/provider.dart';
+part of 'home_view.dart';
 
-class HomeContent extends StatelessWidget {
-  const HomeContent({
-    super.key,
+class _HomeContent extends StatelessWidget {
+  const _HomeContent({
     required this.viewModel,
   });
 
@@ -15,38 +10,56 @@ class HomeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Flutter Tech Day"),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.person),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => AccountView(),
-                ),
-              );
-            },
-          ),
-          IconButton(
-            onPressed: () => themeProvider.toggleDarkMode(),
-            icon: themeProvider.isDarkMode
-                ? Icon(Icons.light_mode)
-                : Icon(Icons.dark_mode),
-          )
-        ],
+      appBar: buildAppBar(themeProvider, context),
+      floatingActionButton: FtdCartButton(),
+      body: buildBody(context),
+    );
+  }
+
+  AppBar buildAppBar(ThemeProvider themeProvider, BuildContext context) {
+    return AppBar(
+      leading: IconButton(
+        onPressed: () => themeProvider.toggleDarkMode(),
+        icon: themeProvider.isDarkMode
+            ? Icon(Icons.light_mode_outlined)
+            : Icon(Icons.dark_mode_outlined),
       ),
-      body: Center(
-        child: Text(
-          "This is counter: ${viewModel.counter}",
-          style: Theme.of(context).textTheme.headlineSmall,
+      title: Text("Flutter Tech Day"),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.person_outline),
+          onPressed: () {},
         ),
+      ],
+    );
+  }
+
+  Widget buildBody(BuildContext context) {
+    if (viewModel.products == null) {
+      return Center(child: CircularProgressIndicator.adaptive());
+    }
+
+    return GridView.builder(
+      itemCount: viewModel.products!.length,
+      padding: EdgeInsets.all(16.0),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        mainAxisSpacing: 8.0,
+        crossAxisSpacing: 8.0,
+        crossAxisCount: MediaQuery.of(context).size.width ~/ 160,
+        childAspectRatio: 2 / 3,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => viewModel.increase(),
-        child: Icon(Icons.add),
-      ),
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      itemBuilder: (context, index) {
+        final product = viewModel.products![index];
+        return _ProductCard(
+          product: product,
+          onAddToCart: () async {
+            await context.read<CartProvider>().addToCart(product);
+          },
+        );
+      },
     );
   }
 }

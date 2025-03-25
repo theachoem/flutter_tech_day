@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tech_days/providers/account_provider.dart';
+import 'package:flutter_tech_days/providers/cart_provider.dart';
 import 'package:flutter_tech_days/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,7 @@ class ProviderScope extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => AccountProvider()),
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => CartProvider()),
       ],
       child: child,
     );
